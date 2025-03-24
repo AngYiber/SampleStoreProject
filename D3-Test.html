@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gráfico con D3</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body { font-family: Arial; }
+    #chart { margin-top: 20px; }
+    .bar text {
+      fill: white;
+      font-size: 14px;
+      alignment-baseline: middle;
+    }
+  </style>
+</head>
+<body>
+
+  <label for="dataInput"><strong>Source Data:</strong></label>
+  <input id="dataInput" type="text" value="4,8,15,16">
+  <button onclick="updateChart()">Update Data</button>
+
+  <div id="chart"></div>
+
+  <script>
+    const chartContainer = d3.select("#chart");
+    const colors = ["#4CAF50", "#2196F3", "#FFC107", "#FF5722", "#9C27B0"];
+
+    function updateChart() {
+      const rawInput = document.getElementById("dataInput").value;
+      const inputData = rawInput.split(",")
+        .map(d => parseInt(d.trim()))
+        .filter(d => !isNaN(d));
+
+      if (inputData.length === 0) {
+        alert("Por favor ingresa números válidos separados por comas.");
+        return;
+      }
+
+      // Limpia gráfico previo
+      chartContainer.selectAll("*").remove();
+
+      const width = 400;
+      const barHeight = 30;
+
+      const svg = chartContainer.append("svg")
+        .attr("width", width)
+        .attr("height", barHeight * inputData.length);
+
+      svg.selectAll("g")
+        .data(inputData)
+        .enter()
+        .append("g")
+        .attr("transform", (_, i) => `translate(0, ${i * barHeight})`)
+        .each(function(d, i) {
+          const group = d3.select(this);
+          const barColor = getDifferentColor(i);
+
+          group.append("rect")
+            .attr("width", d * 10)
+            .attr("height", barHeight - 4)
+            .attr("fill", barColor);
+
+          group.append("text")
+            .attr("x", 5)
+            .attr("y", (barHeight - 4) / 2)
+            .text(d);
+        });
+    }
+
+    function getDifferentColor(index) {
+      const current = index % colors.length;
+      const prev = (index - 1 + colors.length) % colors.length;
+      return current === prev ? colors[(current + 1) % colors.length] : colors[current];
+    }
+
+    updateChart();
+  </script>
+
+</body>
+</html>

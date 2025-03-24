@@ -1,0 +1,6 @@
+@SampleStoreCodingTest_HostAddress = http://localhost:5145
+
+GET {{SampleStoreCodingTest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
